@@ -6,6 +6,7 @@ import org.apache.catalina.User;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,5 +43,10 @@ public class UserController {
             return "signup_form";
         }
         return "redirect:/article/list";
+    }
+
+    @GetMapping("/login")
+    public String userLogin() {
+        return "login_form";
     }
 }

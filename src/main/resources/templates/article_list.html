@@ -11,7 +11,7 @@
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        <tr th:each="article, loop : ${articleList}">
+        <tr th:each="article, loop : ${articlePage}">
             <th scope="row" th:text="${loop.count}"></th>
             <td>
                 <a th:href="@{|/article/detail/${article.id}|}" th:text="${article.title}"></a>
@@ -21,5 +21,6 @@
         </tr>
         </tbody>
     </table>
+    <a class="btn btn-primary" th:href="@{/article/create}">등록하기</a>
 </div>
 </html>

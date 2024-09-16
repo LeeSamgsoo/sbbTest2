@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <div class="card">
+        <div class="card-header">
+            <h2 th:text="${article.title}"></h2>
+        </div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p th:text="${article.content}"></p>
+                <span class="badge rounded-pill text-bg-light">
+                    <div th:text="${article.writer.nickname}"></div>
+                    <div th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </span>
+            </blockquote>
+        </div>
+    </div>
+</div>
+</html>

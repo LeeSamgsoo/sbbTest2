@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,9 @@ public class ArticleService {
     public Page<Article> getPage(int page) {
         Pageable pageable = PageRequest.of(page, 10);
         return this.articleRepository.findAll(pageable);
+    }
+
+    public Article getArticle(Integer id) {
+        return this.articleRepository.findById(id).orElse(null);
     }
 }

@@ -5,14 +5,13 @@ import com.example.demo.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 
@@ -49,5 +48,15 @@ public class ArticleController {
         }
         this.articleService.create(articleForm.getTitle(), articleForm.getContent(), user);
         return "redirect:/article/list";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String articleDetail(Model model, @PathVariable(value = "id") Integer id) {
+        Article article = this.articleService.getArticle(id);
+        if (article == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물을 찾을 수 없습니다.");
+        }
+        model.addAttribute("article", article);
+        return "article_detail";
     }
 }

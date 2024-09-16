@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        <tr th:each="article, loop : ${articleList}">
+            <th scope="row" th:text="${loop.count}"></th>
+            <td>
+                <a th:href="@{|/article/detail/${article.id}|}" th:text="${article.title}"></a>
+            </td>
+            <td th:if="${article.writer != null}" th:text="${article.writer.nickname}"></td>
+            <td th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

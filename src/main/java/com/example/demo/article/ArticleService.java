@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,9 @@ public class ArticleService {
     }
 
     public Page<Article> getPage(int page) {
-        Pageable pageable = PageRequest.of(page, 10);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(orders));
         return this.articleRepository.findAll(pageable);
     }
 

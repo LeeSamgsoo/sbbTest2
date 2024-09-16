@@ -14,6 +14,12 @@
                 </span>
             </blockquote>
         </div>
+        <div class="card-footer"
+             th:if="${article.writer != null and article.writer.username == #authentication.getPrincipal().getUsername()}"
+             sec:authorize="isAuthenticated()">
+            <a class="btn btn-outline-secondary" th:href="@{|/article/modify/${article.id}|}">수정</a>
+            <a class="btn btn-outline-secondary" th:href="@{|/article/delete/${article.id}|}">삭제</a>
+        </div>
     </div>
 </div>
 </html>

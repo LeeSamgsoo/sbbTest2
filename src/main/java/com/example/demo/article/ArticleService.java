@@ -37,4 +37,15 @@ public class ArticleService {
     public Article getArticle(Integer id) {
         return this.articleRepository.findById(id).orElse(null);
     }
+
+    public void modify(String title, String content, Article article) {
+        article.setTitle(title);
+        article.setContent(content);
+        article.setModifyDate(LocalDateTime.now());
+        this.articleRepository.save(article);
+    }
+
+    public void delete(Article article) {
+        this.articleRepository.delete(article);
+    }
 }

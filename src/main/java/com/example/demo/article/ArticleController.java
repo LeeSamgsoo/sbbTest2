@@ -59,4 +59,45 @@ public class ArticleController {
         model.addAttribute("article", article);
         return "article_detail";
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{id}")
+    public String articleModify(ArticleForm articleForm, @PathVariable(value = "id") Integer id, Principal principal) {
+        Article article = this.articleService.getArticle(id);
+        if (!article.getWriter().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
+        }
+        articleForm.setTitle(article.getTitle());
+        articleForm.setContent(article.getContent());
+        return "article_form";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String articleModify(@Valid ArticleForm articleForm, BindingResult bindingResult,
+                                @PathVariable(value = "id") Integer id, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            return "article_form";
+        }
+        Article article = this.articleService.getArticle(id);
+        if (article == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다.");
+        }
+        if (!article.getWriter().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
+        }
+        this.articleService.modify(articleForm.getTitle(), articleForm.getContent(), article);
+        return "redirect:/article/detail/" + id;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String articleDelete(@PathVariable(value = "id") Integer id, Principal principal) {
+        Article article = this.articleService.getArticle(id);
+        if (!article.getWriter().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
+        }
+        this.articleService.delete(article);
+        return "redirect:/article/list";
+    }
 }

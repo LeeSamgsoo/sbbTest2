@@ -21,6 +21,21 @@
         </tr>
         </tbody>
     </table>
+    <nav aria-label="Page navigation example" th:if="${!articlePage.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!articlePage.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${articlePage.number-1}|}">Previous</a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(0, articlePage.totalPages-1)}"
+                th:if="${articlePage.number+5 >= page and articlePage.number-5 <= page}">
+                <a class="page-link" th:classappend="${page == articlePage.number} ? 'active'"
+                   th:href="@{|?page=${page}|}" th:text="${page+1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!articlePage.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${articlePage.number+1}|}">Next</a>
+            </li>
+        </ul>
+    </nav>
     <a class="btn btn-primary" th:href="@{/article/create}">등록하기</a>
 </div>
 </html>

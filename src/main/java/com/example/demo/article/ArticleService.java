@@ -32,4 +32,11 @@ public class ArticleService {
     public Article getArticle(Integer id) {
         return this.articleRepository.findById(id).orElse(null);
     }
+
+    public void modify(Article article, String title, String content) {
+        article.setTitle(title);
+        article.setContent(content);
+        article.setModifyDate(LocalDateTime.now());
+        this.articleRepository.save(article);
+    }
 }

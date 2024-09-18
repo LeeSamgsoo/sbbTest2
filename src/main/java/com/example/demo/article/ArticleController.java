@@ -79,6 +79,9 @@ public class ArticleController {
     @PostMapping("/modify/{id}")
     public String articleModify(@Valid ArticleForm articleForm, BindingResult bindingResult,
                                 @PathVariable(value = "id") Integer id, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            return "article_form";
+        }
         Article article = this.articleService.getArticle(id);
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
@@ -88,5 +91,19 @@ public class ArticleController {
         }
         this.articleService.modify(article, articleForm.getTitle(), articleForm.getContent());
         return "redirect:/article/detail/" + id;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String articleDelete(@PathVariable(value = "id") Integer id, Principal principal) {
+        Article article = this.articleService.getArticle(id);
+        if (article == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
+        }
+        if (!principal.getName().equals(article.getWriter().getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
+        }
+        this.articleService.delete(article);
+        return "redirect:/article/list";
     }
 }

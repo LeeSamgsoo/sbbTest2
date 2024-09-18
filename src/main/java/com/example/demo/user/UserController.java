@@ -2,6 +2,8 @@ package com.example.demo.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +32,20 @@ public class UserController {
         }
         try {
             this.userService.create(userCreateForm.getUsername(), userCreateForm.getPassword(), userCreateForm.getNickname());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            bindingResult.reject("signup_error", "이미 가입된 사용자입니다.");
+            return "signup_form";
         } catch (Exception e) {
             e.printStackTrace();
             bindingResult.reject("signup_error", e.getMessage());
             return "signup_form";
         }
         return "redirect:/article/list";
+    }
+
+    @GetMapping("/login")
+    public String userLogin() {
+        return "login_form";
     }
 }

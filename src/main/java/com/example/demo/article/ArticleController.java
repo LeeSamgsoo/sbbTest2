@@ -9,10 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -49,5 +46,15 @@ public class ArticleController {
         }
         this.articleService.create(articleForm.getTitle(), articleForm.getContent(), user);
         return "redirect:/article/list";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String articleDetail(@PathVariable(value = "id") Integer id, Model model) {
+        Article article = this.articleService.getArticle(id);
+        if (article == null) {
+            return "redirect:/article/list";
+        }
+        model.addAttribute("article", article);
+        return "article_detail";
     }
 }

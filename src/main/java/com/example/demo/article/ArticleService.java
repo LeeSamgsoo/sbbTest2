@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,5 +27,9 @@ public class ArticleService {
         article.setWriter(user);
         article.setCreateDate(LocalDateTime.now());
         this.articleRepository.save(article);
+    }
+
+    public Article getArticle(Integer id) {
+        return this.articleRepository.findById(id).orElse(null);
     }
 }

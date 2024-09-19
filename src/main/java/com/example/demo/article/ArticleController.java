@@ -2,6 +2,8 @@ package com.example.demo.article;
 
 import com.example.demo.user.SiteUser;
 import com.example.demo.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,11 +40,11 @@ public class ArticleController {
 
     //@PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String articleCreate(@Valid ArticleForm articleForm, BindingResult bindingResult, Principal principal) {
+    public String articleCreate(@Valid ArticleForm articleForm, BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "article_form";
         }
-        SiteUser user = this.userService.getUser(principal.getName());
+        SiteUser user = this.userService.getUser(session.getAttribute("username").toString());
         if (user == null) {
             bindingResult.reject("user not found", "사용자를 찾을 수 없습니다.");
             return "article_form";

@@ -19,7 +19,7 @@
             </blockquote>
         </div>
         <div class="card-footer"
-             th:if="${session.username != null and article.writer != null and article.writer.username == #authentication.getPrincipal().getUsername()}">
+             th:if="${article.writer != null and article.writer.username == session.username}">
             <a class="btn btn-outline-secondary" th:href="@{|/article/modify/${article.id}|}">수정</a>
             <a class="btn btn-outline-secondary" th:href="@{|/article/delete/${article.id}|}">삭제</a>
         </div>

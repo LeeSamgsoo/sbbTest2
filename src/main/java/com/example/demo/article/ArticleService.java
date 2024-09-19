@@ -18,11 +18,11 @@ import java.util.Optional;
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    public Page<Article> getArticles(int page) {
+    public Page<Article> getArticles(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.articleRepository.findAll(pageable);
+        return this.articleRepository.findAllByKeyword(kw, pageable);
     }
 
     public void create(String title, String content, SiteUser user) {

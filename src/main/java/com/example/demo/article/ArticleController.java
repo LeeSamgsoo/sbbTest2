@@ -23,9 +23,11 @@ public class ArticleController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public String articleList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
-        Page<Article> articles = this.articleService.getArticles(page);
+    public String articleList(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                              @RequestParam(value = "kw", defaultValue = "") String kw) {
+        Page<Article> articles = this.articleService.getArticles(page, kw);
         model.addAttribute("articlePage", articles);
+        model.addAttribute("kw", kw);
         return "article_list";
     }
 

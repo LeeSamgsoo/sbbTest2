@@ -17,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 인터셉터를 적용할 URL 경로 설정
         registry.addInterceptor(userInterceptor)
-                .addPathPatterns("/article/delete")
                 .excludePathPatterns("/**", "/css/**", "/js/**")
         ;
     }

@@ -65,12 +65,12 @@ public class ArticleController {
 
     //@PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String articleModify(ArticleForm articleForm, @PathVariable(value = "id") Integer id, Principal principal) {
+    public String articleModify(ArticleForm articleForm, @PathVariable(value = "id") Integer id, HttpSession session) {
         Article article = this.articleService.getArticle(id);
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
         }
-        if (!principal.getName().equals(article.getWriter().getUsername())) {
+        if (!session.getAttribute("username").toString().equals(article.getWriter().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         articleForm.setTitle(article.getTitle());
@@ -81,7 +81,7 @@ public class ArticleController {
     //@PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String articleModify(@Valid ArticleForm articleForm, BindingResult bindingResult,
-                                @PathVariable(value = "id") Integer id, Principal principal) {
+                                @PathVariable(value = "id") Integer id, HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "article_form";
         }
@@ -89,7 +89,7 @@ public class ArticleController {
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
         }
-        if (!principal.getName().equals(article.getWriter().getUsername())) {
+        if (!session.getAttribute("username").toString().equals(article.getWriter().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         this.articleService.modify(article, articleForm.getTitle(), articleForm.getContent());
@@ -98,12 +98,12 @@ public class ArticleController {
 
     //@PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String articleDelete(@PathVariable(value = "id") Integer id, Principal principal) {
+    public String articleDelete(@PathVariable(value = "id") Integer id, HttpSession session) {
         Article article = this.articleService.getArticle(id);
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
         }
-        if (!principal.getName().equals(article.getWriter().getUsername())) {
+        if (!session.getAttribute("username").toString().equals(article.getWriter().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
         }
         this.articleService.delete(article);

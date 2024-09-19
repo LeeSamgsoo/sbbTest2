@@ -10,12 +10,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     public void create(String username, String password, String nickname) {
         SiteUser user = new SiteUser();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setUsername(username);
-        user.setPassword(this.passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         user.setNickname(nickname);
         this.userRepository.save(user);
     }

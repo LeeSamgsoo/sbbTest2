@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,13 +35,32 @@ public class ArticleController {
 
     //@PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String articleCreate(ArticleForm articleForm) {
+    public String articleCreate(ArticleForm articleForm, Model model, HttpSession session) {
+        // CSRF 토큰 생성
+        String csrfToken = UUID.randomUUID().toString();
+        // 세션에 토큰 저장
+        session.setAttribute("csrfToken", csrfToken);
+        // 모델에 토큰을 전달하여 폼에서 사용
+        model.addAttribute("csrfToken", csrfToken);
         return "article_form";
     }
 
     //@PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String articleCreate(@Valid ArticleForm articleForm, BindingResult bindingResult, HttpSession session) {
+    public String articleCreate(@Valid ArticleForm articleForm, BindingResult bindingResult,
+                                HttpSession session, HttpServletRequest request) {
+        // 폼에서 전송된 CSRF 토큰
+        String formCsrfToken = request.getParameter("csrfToken");
+
+        // 세션에 저장된 CSRF 토큰
+        String sessionCsrfToken = (String) request.getSession().getAttribute("csrfToken");
+
+        // CSRF 토큰 검증
+        if (sessionCsrfToken == null || !sessionCsrfToken.equals(formCsrfToken)) {
+            // 토큰이 일치하면 처리 진행
+            // 비즈니스 로직 처리
+            return "article_form";
+        }
         if (bindingResult.hasErrors()) {
             return "article_form";
         }
@@ -65,7 +85,8 @@ public class ArticleController {
 
     //@PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String articleModify(ArticleForm articleForm, @PathVariable(value = "id") Integer id, HttpSession session) {
+    public String articleModify(ArticleForm articleForm, @PathVariable(value = "id") Integer id,
+                                HttpSession session, Model model) {
         Article article = this.articleService.getArticle(id);
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
@@ -73,6 +94,13 @@ public class ArticleController {
         if (!session.getAttribute("username").toString().equals(article.getWriter().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
+        // CSRF 토큰 생성
+        String csrfToken = UUID.randomUUID().toString();
+        // 세션에 토큰 저장
+        session.setAttribute("csrfToken", csrfToken);
+        // 모델에 토큰을 전달하여 폼에서 사용
+        model.addAttribute("csrfToken", csrfToken);
+
         articleForm.setTitle(article.getTitle());
         articleForm.setContent(article.getContent());
         return "article_form";
@@ -81,7 +109,19 @@ public class ArticleController {
     //@PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String articleModify(@Valid ArticleForm articleForm, BindingResult bindingResult,
-                                @PathVariable(value = "id") Integer id, HttpSession session) {
+                                @PathVariable(value = "id") Integer id, HttpServletRequest request) {
+        // 폼에서 전송된 CSRF 토큰
+        String formCsrfToken = request.getParameter("csrfToken");
+
+        // 세션에 저장된 CSRF 토큰
+        String sessionCsrfToken = (String) request.getSession().getAttribute("csrfToken");
+
+        // CSRF 토큰 검증
+        if (sessionCsrfToken == null || !sessionCsrfToken.equals(formCsrfToken)) {
+            // 토큰이 일치하면 처리 진행
+            // 비즈니스 로직 처리
+            return "article_form";
+        }
         if (bindingResult.hasErrors()) {
             return "article_form";
         }
@@ -89,7 +129,7 @@ public class ArticleController {
         if (article == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시물이 존재하지 않습니다.");
         }
-        if (!session.getAttribute("username").toString().equals(article.getWriter().getUsername())) {
+        if (!request.getSession().getAttribute("username").toString().equals(article.getWriter().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         this.articleService.modify(article, articleForm.getTitle(), articleForm.getContent());
